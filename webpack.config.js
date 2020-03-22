@@ -1,13 +1,12 @@
-var Webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const Webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-var path = require('path');
-var nodeModulesPath = path.resolve(__dirname, 'node_modules');
-var buildPath = path.resolve(__dirname, 'build');
-var mainPath = path.resolve(__dirname, 'src', 'index.js');
+const path = require('path');
+const nodeModulesPath = path.resolve(__dirname, 'node_modules');
+const buildPath = path.resolve(__dirname, 'build');
+const mainPath = path.resolve(__dirname, 'src', 'index.js');
 
-var config = {
-    devtool: 'eval',
+module.exports = {
     entry: [
         'webpack/hot/dev-server',
         'webpack-dev-server/client?http://localhost:8080',
@@ -19,30 +18,31 @@ var config = {
         publicPath: '/build/'
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.js$/,
-                loader: 'babel',
                 exclude: [nodeModulesPath],
-                query: {
-                  presets: ['es2015']
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
                 }
             },
             {
                 test: /\.css$/,
-                loader: 'style!css'
+                use: ['style-loader', 'css-loader']
             },
             {
                 test: /\.(glsl|frag|vert)$/,
-                loader: 'raw!glslify',
                 exclude: [nodeModulesPath],
-              },
+                use: ['raw-loader', 'glslify-loader']
+            }
         ]
     },
     plugins: [
       new HtmlWebpackPlugin(),
       new Webpack.HotModuleReplacementPlugin()
-    ]
+    ],
+    mode: 'development'
 };
-
-module.exports = config;

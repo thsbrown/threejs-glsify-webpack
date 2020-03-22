@@ -1,7 +1,9 @@
-#pragma glslify: noise = require(glsl-noise/simplex/2d)
+#pragma glslify:
+
+uniform vec2 u_resolution;
+uniform float u_time;
 
 void main() {
-  float brightness = noise(gl_FragCoord.xy);
-
-  gl_FragColor = vec4(vec3(brightness), 1.);
+  vec2 st = gl_FragCoord.xy/u_resolution.xy;
+  gl_FragColor=vec4(st.x,st.y,0.0,1.0);
 }

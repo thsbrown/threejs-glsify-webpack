@@ -1,13 +1,11 @@
-require('./theme/index.css');
+import './theme/index.css';
+import * as THREE from 'three';
+import fragmentShader from './shaders/test.frag';
+import vertexShader from './shaders/test.vert';
 
-const THREE = require('three');
-
-const fragmentShader = require('./shaders/test.frag');
-const vertexShader = require('./shaders/test.vert');
-
-var container;
-var camera, scene, renderer, mesh;
-var uniforms;
+let container;
+let camera, scene, renderer, mesh;
+let uniforms;
 
 init();
 animate();
@@ -20,7 +18,7 @@ function init() {
 
     scene = new THREE.Scene();
 
-    var geometry = new THREE.BoxBufferGeometry( 1, 1, 1 );
+    let geometry = new THREE.PlaneBufferGeometry( 2, 2 );
 
     uniforms = {
         u_time: {
@@ -37,7 +35,7 @@ function init() {
         }
     };
 
-    var material = new THREE.ShaderMaterial({
+    let material = new THREE.ShaderMaterial({
         uniforms: uniforms,
         vertexShader,
         fragmentShader
