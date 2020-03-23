@@ -7,70 +7,71 @@ let container;
 let camera, scene, renderer, mesh;
 let uniforms;
 
-init();
-animate();
+class App {
+    constructor() {
+        container = document.body;
+        camera = new THREE.Camera();
+        camera.position.z = 1;
+        scene = new THREE.Scene();
+        let geometry = new THREE.PlaneBufferGeometry( 2, 2 );
 
-function init() {
-    container = document.body;
+        uniforms = {
+            u_time: {
+                type: "f",
+                value: 1.0
+            },
+            u_resolution: {
+                type: "v2",
+                value: new THREE.Vector2()
+            },
+            u_mouse: {
+                type: "v2",
+                value: new THREE.Vector2()
+            }
+        };
 
-    camera = new THREE.Camera();
-    camera.position.z = 1;
+        let material = new THREE.ShaderMaterial({
+            uniforms: uniforms,
+            vertexShader,
+            fragmentShader
+        });
 
-    scene = new THREE.Scene();
+        mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
 
-    let geometry = new THREE.PlaneBufferGeometry( 2, 2 );
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio(window.devicePixelRatio);
 
-    uniforms = {
-        u_time: {
-            type: "f",
-            value: 1.0
-        },
-        u_resolution: {
-            type: "v2",
-            value: new THREE.Vector2()
-        },
-        u_mouse: {
-            type: "v2",
-            value: new THREE.Vector2()
-        }
-    };
+        container.appendChild(renderer.domElement);
 
-    let material = new THREE.ShaderMaterial({
-        uniforms: uniforms,
-        vertexShader,
-        fragmentShader
-    });
+        this.onWindowResize();
+        window.addEventListener('resize', this.onWindowResize, false);
 
-    mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
+        document.onmousemove = function(e) {
+            uniforms.u_mouse.value.x = e.pageX;
+            uniforms.u_mouse.value.y = e.pageY;
+        };
 
-    renderer = new THREE.WebGLRenderer();
-    renderer.setPixelRatio(window.devicePixelRatio);
-
-    container.appendChild(renderer.domElement);
-
-    onWindowResize();
-    window.addEventListener('resize', onWindowResize, false);
-
-    document.onmousemove = function(e) {
-        uniforms.u_mouse.value.x = e.pageX
-        uniforms.u_mouse.value.y = e.pageY
+        this.animate();
     }
-}
 
-function onWindowResize(event) {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    uniforms.u_resolution.value.x = renderer.domElement.width;
-    uniforms.u_resolution.value.y = renderer.domElement.height;
-}
+    onWindowResize(event) {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        uniforms.u_resolution.value.x = renderer.domElement.width;
+        uniforms.u_resolution.value.y = renderer.domElement.height;
+    }
 
-function animate() {
-    requestAnimationFrame(animate);
+    animate() {
+        requestAnimationFrame(() => {
+            this.animate();
+        });
+        this.render();
+    }
 
-    render();
-}
+    render() {
+        uniforms.u_time.value += 0.05;
+        renderer.render(scene, camera);
+    }
 
-function render() {
-    uniforms.u_time.value += 0.05;
-    renderer.render(scene, camera);
 }
+const app = new App();
