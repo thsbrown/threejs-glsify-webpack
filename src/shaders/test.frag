@@ -13,7 +13,7 @@ float plot(vec2 uv, float pct){
 void main() {
   vec2 uv = gl_FragCoord.xy/u_resolution;
   float amplitude = 4.0+sin(u_time);
-  float ySin = sin(uv.x*PI*2.0+u_time)/amplitude+0.5;
+  float ySin = sin(uv.x*PI*2.0+u_time)/amplitude+abs(sin(uv.x));
 
   float blackAndWhiteColor = step(ySin,uv.y);
   float upperColor = abs(sin(u_time));
